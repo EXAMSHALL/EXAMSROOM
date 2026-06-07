@@ -1,7 +1,6 @@
 import React from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
 import { motion } from 'motion/react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { Check, X, Clock } from 'lucide-react'
 
 interface ResultsScreenProps {
@@ -43,12 +42,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
   const { correct, incorrect, skipped, percentage } = calculateResults()
   const minutes = Math.floor(timeSpent / 60)
   const seconds = timeSpent % 60
-
-  const chartData = [
-    { name: t('result.correct'), value: correct, fill: '#10b981' },
-    { name: t('result.incorrect'), value: incorrect, fill: '#ef4444' },
-    { name: t('result.skipped'), value: skipped, fill: '#6b7280' },
-  ]
+  const maxQuestions = quiz.questions.length
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 p-4">
@@ -66,7 +60,7 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
         >
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-500 mb-4 mx-auto">
             <span className="text-4xl font-bold text-white">
-              {percentage > 70 ? '🎉' : percentage > 50 ? '👍' : '📚'}
+              {percentage > 70 ? '🎉' : percentage > 50 ? '👏' : '📚'}
             </span>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">{t('result.score')}</h1>
@@ -114,29 +108,32 @@ export const ResultsScreen: React.FC<ResultsScreenProps> = ({
           ))}
         </div>
 
-        {/* Chart */}
+        {/* Simple Chart */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
           className="bg-white/10 backdrop-blur-xl rounded-xl border border-white/20 p-6 mb-8"
         >
-          <h2 className="text-xl font-bold text-white mb-4">{t('result.review')}</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-              <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-              <YAxis stroke="rgba(255,255,255,0.5)" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'rgba(15, 23, 42, 0.8)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: '8px',
-                }}
-              />
-              <Bar dataKey="value" fill="#6366f1" />
-            </BarChart>
-          </ResponsiveContainer>
+          <h2 className="text-xl font-bold text-white mb-6">{t('result.review')}</h2>
+          <div className="flex items-end justify-around gap-4 h-48">
+            {[
+              { label: t('result.correct'), value: correct, color: 'bg-green-500', max: maxQuestions },
+              { label: t('result.incorrect'), value: incorrect, color: 'bg-red-500', max: maxQuestions },
+              { label: t('result.skipped'), value: skipped, color: 'bg-slate-500', max: maxQuestions },
+            ].map((bar, idx) => (
+              <div key={idx} className="flex flex-col items-center gap-2">
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={{ height: `${(bar.value / bar.max) * 100}%` }}
+                  transition={{ delay: idx * 0.1, duration: 0.5 }}
+                  className={`${bar.color} rounded-t-lg w-16 min-h-4 opacity-80`}
+                />
+                <p className="text-white font-bold text-lg">{bar.value}</p>
+                <p className="text-slate-400 text-sm">{bar.label}</p>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         {/* Actions */}
