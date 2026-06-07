@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useState as useStateMotion } from 'react'
 import { LanguageProvider } from './contexts/LanguageContext'
 import { Navbar } from './components/Navbar'
 import { AuthScreen } from './components/AuthScreen'
@@ -49,6 +48,31 @@ function App() {
           correctAnswer: 1,
           explanationEn: 'Plants use carbon dioxide from the air for photosynthesis.',
           explanationBn: 'গাছপালা বায়ু থেকে কার্বন ডাইঅক্সাইড সালোকসংশ্লেষণের জন্য ব্যবহার করে।',
+        },
+      ],
+    },
+    {
+      id: '2',
+      titleEn: 'Mathematics - Class 7',
+      titleBn: 'গণিত - ক্লাস ৭',
+      descriptionEn: 'Basic arithmetic operations',
+      descriptionBn: 'মৌলিক গণিত অপারেশন',
+      class: 'Class 7',
+      subject: 'Mathematics',
+      durationMinutes: 15,
+      status: 'published',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      questions: [
+        {
+          id: '1',
+          textEn: 'What is 15 × 8?',
+          textBn: '১৫ × ৮ = ?',
+          optionsEn: ['100', '110', '120', '130'],
+          optionsBn: ['১০০', '১১০', '১২০', '১৩০'],
+          correctAnswer: 2,
+          explanationEn: '15 × 8 = 120',
+          explanationBn: '১৫ × ৮ = ১২০',
         },
       ],
     },
@@ -105,8 +129,7 @@ function App() {
   return (
     <LanguageProvider>
       <div className="bg-slate-900 min-h-screen">
-        {currentUser && <Navbar user={currentUser} onLogout={handleLogout} />
-        }
+        {currentUser && <Navbar user={currentUser} onLogout={handleLogout} />}
 
         {/* Render screens */}
         {currentScreen === 'auth' && (
