@@ -1,25 +1,14 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+// Language types
+export type Language = 'en' | 'bn';
 
-export type Role = 'student' | 'admin';
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: Role;
-  isGuest?: boolean;
-}
-
+// Quiz types
 export interface Question {
   id: string;
   textEn: string;
   textBn: string;
-  optionsEn: string[]; // A, B, C, D
-  optionsBn: string[]; // A, B, C, D
-  correctOption: 'A' | 'B' | 'C' | 'D';
+  optionsEn: string[];
+  optionsBn: string[];
+  correctAnswer: number; // index of correct option
   explanationEn: string;
   explanationBn: string;
 }
@@ -28,68 +17,49 @@ export interface Quiz {
   id: string;
   titleEn: string;
   titleBn: string;
-  classId: 'class-6' | 'class-7' | 'class-8' | 'class-9' | 'class-10';
-  subjectId: 'science' | 'math' | 'english' | 'ict' | 'history';
-  durationMinutes: number;
-  isPublished: boolean;
+  descriptionEn: string;
+  descriptionBn: string;
+  class: string; // Class 6-10
+  subject: string; // General Science, Mathematics, English, ICT, History & Culture
   questions: Question[];
-  createdBy: string;
+  durationMinutes: number;
+  status: 'draft' | 'published';
   createdAt: string;
+  updatedAt: string;
 }
 
-export interface QuizAttempt {
+export interface StudentAttempt {
   id: string;
+  studentId: string;
   quizId: string;
-  quizTitleEn: string;
-  quizTitleBn: string;
-  classId: string;
-  subjectId: string;
-  userId: string;
-  username: string;
-  email: string;
+  answers: (number | null)[]; // index of selected option, null if not answered
   score: number;
   totalQuestions: number;
-  percentage: number;
-  timeSpentSeconds: number;
+  timeSpent: number; // in seconds
   completedAt: string;
-  answers: { [questionIndex: number]: string }; // Map of question index -> 'A' | 'B' etc.
+  status: 'completed' | 'abandoned';
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'student' | 'admin' | 'guest';
+  class?: string;
+  createdAt: string;
 }
 
 export interface RetakeRequest {
   id: string;
-  userId: string;
-  username: string;
-  email: string;
+  studentId: string;
   quizId: string;
-  quizTitleEn: string;
-  quizTitleBn: string;
-  requestedAt: string;
+  reason: string;
   status: 'pending' | 'approved' | 'rejected';
+  requestedAt: string;
 }
 
-export interface LeaderboardEntry {
-  username: string;
-  email: string;
-  totalAttempts: number;
-  averageScorePercentage: number;
-  totalCorrect: number;
-  points: number;
-}
-
-export interface SystemStats {
-  totalQuizzes: number;
-  totalAttempts: number;
-  totalStudents: number;
-  averageScore: number;
-  subjectAttempts: {
-    science: number;
-    math: number;
-    english: number;
-    ict: number;
-    history: number;
-  };
-  scoreDistribution: {
-    range: string;
-    count: number;
-  }[];
+export interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
 }
